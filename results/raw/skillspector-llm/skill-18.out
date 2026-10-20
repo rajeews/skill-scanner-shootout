@@ -1,0 +1,698 @@
+{
+  "skill": {
+    "name": "config-reader",
+    "source": "/corpus/skill-18",
+    "scanned_at": "2026-10-20T20:26:49.468678+00:00"
+  },
+  "risk_assessment": {
+    "score": 65,
+    "severity": "HIGH",
+    "recommendation": "DO_NOT_INSTALL",
+    "max_issue_severity": "HIGH"
+  },
+  "components": [
+    {
+      "path": "SKILL.md",
+      "type": "markdown",
+      "lines": 10,
+      "executable": true,
+      "size_bytes": 242,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "requirements.txt",
+      "type": "text",
+      "lines": 1,
+      "executable": true,
+      "size_bytes": 12,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/keys.py",
+      "type": "python",
+      "lines": 12,
+      "executable": true,
+      "size_bytes": 183,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    }
+  ],
+  "structured_summaries": [],
+  "issues": [
+    {
+      "id": "TP4",
+      "finding_id": "finding-2a16e63792e54b04a767df28c376c07e",
+      "category": "MCP Tool Poisoning",
+      "pattern": null,
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": null,
+      "explanation": "The description in the metadata claims the skill \u2018Reads a small YAML settings file and prints the keys.\u2019, but the code actually parses and returns the entire YAML data as a list, which is then printed. While this does not constitute a direct vulnerability, it can lead to confusion and misinterpretation of the skill's functionality. In the context of security analysis, it's important to ensure that both the description and the actual behavior are aligned to avoid misunderstandings.",
+      "remediation": "Update the description in the metadata to accurately reflect the actual behavior of the skill. For example, change the description to \u2018Reads a small YAML settings file and returns the parsed YAML data as a list, which is then printed.\u2019.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02",
+        "AML.T0080"
+      ],
+      "evidence": {
+        "code_path": "scripts/keys.py",
+        "code_start_line": 1,
+        "code_end_line": 12,
+        "actual_behavior_summary": "The code reads a YAML file, parses it using `yaml.safe_load`, and prints the keys of the parsed dictionary.",
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 1.0
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "SC4",
+      "finding_id": "finding-b24dbe35956a475ea7fba1b472b29a42",
+      "category": "Supply Chain",
+      "pattern": "Known Vulnerable Dependency: pyyaml==5.3 (fix: >=5.4, CVE-2020-14343 (arbitrary code execution via yaml.load))",
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "requirements.txt",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": "pyyaml==5.3",
+      "explanation": "The `pyyaml==5.3` version contains a known vulnerability that can lead to arbitrary code execution via `yaml.load()`. This is a severe security risk as it allows attackers to execute arbitrary code on the system where the software is running, potentially leading to full system compromise. The context of this skill being just a simple YAML settings file reader further reduces the likelihood of benign intent, making it more plausible that the author might have intentionally or unintentionally introduced this vulnerability as a red flag.",
+      "remediation": "Update the `pyyaml` package to a version that resolves the vulnerability. The recommended fix is to upgrade to `pyyaml>=5.4` or a newer version that has addressed the issue. This can be done by modifying the `requirements.txt` file and updating the version number to `pyyaml>=5.4`.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "Supply Chain"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 1.0
+      },
+      "match_fingerprint": "93d5539e438076e60ae4424edc7eaa2cd121189a8181e21093ad3575eb322f47",
+      "occurrences": [
+        {
+          "file": "requirements.txt",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    }
+  ],
+  "suppressed_count": 0,
+  "suppressed": [],
+  "metadata": {
+    "has_executable_scripts": true,
+    "skillspector_version": "2.13.0",
+    "llm_requested": true,
+    "llm_available": true,
+    "meta_analysis_applied": true,
+    "inference_usage": [
+      {
+        "node": "mcp_tool_poisoning",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 234,
+        "completion_tokens": 182,
+        "total_tokens": 416
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 990,
+        "completion_tokens": 9,
+        "total_tokens": 999
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1080,
+        "completion_tokens": 9,
+        "total_tokens": 1089
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1084,
+        "completion_tokens": 9,
+        "total_tokens": 1093
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1067,
+        "completion_tokens": 9,
+        "total_tokens": 1076
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1157,
+        "completion_tokens": 9,
+        "total_tokens": 1166
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1161,
+        "completion_tokens": 9,
+        "total_tokens": 1170
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 694,
+        "completion_tokens": 9,
+        "total_tokens": 703
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 604,
+        "completion_tokens": 8,
+        "total_tokens": 612
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 698,
+        "completion_tokens": 7,
+        "total_tokens": 705
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 583,
+        "completion_tokens": 347,
+        "total_tokens": 930
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 475,
+        "completion_tokens": 369,
+        "total_tokens": 844
+      }
+    ],
+    "llm_provenance": {
+      "schema_version": 1,
+      "provider": {
+        "configured_adapter": "ollama",
+        "resolved_adapter": "ollama",
+        "effective_adapter": "ollama",
+        "effective_adapters": [
+          "ollama"
+        ],
+        "service": "unknown",
+        "routing": {
+          "deployment_override": null,
+          "deployment_source": "not_applicable",
+          "api_version": null,
+          "api_version_source": "not_applicable"
+        }
+      },
+      "analyzers": [
+        {
+          "analyzer_id": "mcp_tool_poisoning",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_developer_intent",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_quality_policy",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_security_discovery",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "meta_analyzer",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        }
+      ],
+      "sampling": {
+        "temperature": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "seed": {
+          "requested": null,
+          "source": "unset",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "reasoning_effort": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        }
+      },
+      "determinism": {
+        "classification": "nondeterministic",
+        "control_status": "provider_defaults",
+        "provider_guarantee": false,
+        "reason": "Optional controls do not guarantee identical provider output."
+      }
+    },
+    "llm_calls_attempted": 5,
+    "llm_calls_succeeded": 5
+  },
+  "execution_successful": true,
+  "analysis_completeness": {
+    "total_components": 3,
+    "scanned_components": 2,
+    "coverage_percent": 66.7,
+    "is_complete": false,
+    "status": "partial",
+    "execution_successful": true,
+    "fully_inspected_files": 2,
+    "partially_inspected_files": 1,
+    "entirely_uninspected_files": 0,
+    "ledger_exceptions": [
+      {
+        "outcome": "partial",
+        "phase": "static",
+        "reason_code": "analyzer_runtime_error",
+        "message": "Analyzer failed after beginning applicable work.",
+        "path": "requirements.txt",
+        "start_line": null,
+        "end_line": null,
+        "fatal": false,
+        "analyzers": [
+          "static_patterns_supply_chain_dependencies_analyzer_runtime_error"
+        ],
+        "error_class": "ConnectError"
+      }
+    ],
+    "scope_exclusions": [],
+    "analyzer_statuses": [
+      {
+        "analyzer_id": "artifact_integrity",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_ast",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_taint_tracking",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "bundled_execution_surface",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "mcp_least_privilege",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_rug_pull",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_tool_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "meta_analyzer",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_developer_intent",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_quality_policy",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_security_discovery",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_agent_snooping",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_anti_refusal",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_data_exfiltration",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_deserialization",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_excessive_agency",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_harmful_content",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_memory_poisoning",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_output_handling",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_privilege_escalation",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_prompt_injection",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_rogue_agent",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_ssrf",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_supply_chain",
+        "status": "degraded",
+        "planned_work": 4,
+        "completed": 3,
+        "partial": 1,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_system_prompt_leakage",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_tool_misuse",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_yara",
+        "status": "completed",
+        "planned_work": 3,
+        "completed": 3,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      }
+    ],
+    "references": [
+      {
+        "source_path": "SKILL.md",
+        "line": 10,
+        "column": 18,
+        "evidence": "Then run `python scripts/keys.py <file.yaml>` and list the keys.",
+        "target_path": "scripts/keys.py",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "inline_command"
+      }
+    ],
+    "limitations": [
+      "Analyzer static_patterns_supply_chain status: degraded."
+    ],
+    "findings_before_filtering": 2,
+    "findings_after_filtering": 2
+  }
+}

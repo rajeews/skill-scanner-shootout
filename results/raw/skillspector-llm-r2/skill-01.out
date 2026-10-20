@@ -1,0 +1,807 @@
+{
+  "skill": {
+    "name": "command-runner",
+    "source": "/corpus/skill-01",
+    "scanned_at": "2026-10-20T20:53:22.078717+00:00"
+  },
+  "risk_assessment": {
+    "score": 100,
+    "severity": "CRITICAL",
+    "recommendation": "DO_NOT_INSTALL",
+    "max_issue_severity": "HIGH"
+  },
+  "components": [
+    {
+      "path": "SKILL.md",
+      "type": "markdown",
+      "lines": 8,
+      "executable": true,
+      "size_bytes": 193,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/run.py",
+      "type": "python",
+      "lines": 10,
+      "executable": true,
+      "size_bytes": 203,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    }
+  ],
+  "structured_summaries": [],
+  "issues": [
+    {
+      "id": "TP4",
+      "finding_id": "finding-903fb581f1e843cebc2e68a7a9fd4805",
+      "category": "MCP Tool Poisoning",
+      "pattern": null,
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": null,
+      "explanation": "There's a description-behavior mismatch: The declared purpose matches the actual behavior of running commands based on user input, but the metadata does not specify the required permissions. This could mislead users and overlook essential security protections. The actual behavior, particularly the use of shell, needs to be reflected in the metadata to ensure users understand the capabilities of the agent.",
+      "remediation": "Update the `permissions` or `allowed-tools` metadata to reflect the actual shell command execution behavior. This should include any security or privacy settings that apply to running commands.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02",
+        "AML.T0080"
+      ],
+      "evidence": {
+        "code_path": "scripts/run.py",
+        "code_start_line": 1,
+        "code_end_line": 10,
+        "actual_behavior_summary": "Executes a command passed via command-line arguments and prints the command output.",
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.8
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "TM1",
+      "finding_id": "finding-6b14729ff3394a7b92ce703fc2bd9371",
+      "category": "Tool Misuse",
+      "pattern": "Tool Parameter Abuse",
+      "severity": "HIGH",
+      "confidence": 0.95,
+      "location": {
+        "file": "scripts/run.py",
+        "start_line": 6,
+        "end_line": null,
+        "start_column": 11
+      },
+      "finding": "subprocess.run(command, shell=True",
+      "explanation": "The `subprocess.run` function call with `shell=True` allows tool parameter abuse, which can potentially lead to shell injection. An attacker could manipulate command inputs to execute arbitrary commands, compromising the system or leaking sensitive information.",
+      "remediation": "Avoid using `shell=True` and instead pass the command as a list of arguments. Sanitize or validate command inputs to ensure they are safe. Never pass untrusted data to the `run` function directly.",
+      "code_snippet": "import subprocess\nimport sys\n\n\ndef run(command):\n    return subprocess.run(command, shell=True, capture_output=True, text=True).stdout\n\n\nif __name__ == \"__main__\":\n    print(run(\" \".join(sys.argv[1:])))",
+      "intent": null,
+      "tags": [
+        "Tool Misuse"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.95
+      },
+      "match_fingerprint": "c2990a500b7c2fd83d2272c8ffa3010f3ce992e10fb51d80c368071831ffe7b5",
+      "occurrences": [
+        {
+          "file": "scripts/run.py",
+          "start_line": 6,
+          "end_line": null,
+          "start_column": 11
+        }
+      ]
+    },
+    {
+      "id": "LP3",
+      "finding_id": "finding-4e7dc66198da41e992525323bc63dde3",
+      "category": "MCP Least Privilege",
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": null,
+      "explanation": "Without declared permissions the skill's intent is opaque and cannot be validated.",
+      "remediation": "Declare the skill's tool scope: for Claude Code / Agent Skills SKILL.md, list the tools the skill may invoke in the 'allowed-tools' frontmatter field; for MCP server manifests, add a 'permissions' list naming the required capabilities.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02",
+        "llm-unconfirmed"
+      ],
+      "evidence": {
+        "llm_review_outcome": "low-confidence",
+        "llm_review_confidence": 0.5
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "SQP-3",
+      "finding_id": "finding-a99031a0ce8f403daaebb8f0e0b1aba6",
+      "category": null,
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 0.95,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": 4
+      },
+      "finding": null,
+      "explanation": "According to the description, the skill does not provide any user choice regarding the language or locale, which could be a violation of local language policies for multilingual user bases. This is flagged as a potential issue because the skill's documentation does not address this aspect, even though it mentions the purpose of the skill without specifying how it handles user preferences or language settings. However, without a clear regional or multilingual context, this is more of a speculative concern.",
+      "remediation": "Consider adding a section in the SKILL.md file to allow users to specify their preferred language or locale, or explicitly document the language handling strategy if it is specific to the skill\u2019s functionality.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "llm-unconfirmed"
+      ],
+      "evidence": {
+        "llm_review_outcome": "low-confidence",
+        "llm_review_confidence": 0.4
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": 4
+        }
+      ]
+    },
+    {
+      "id": "SDI-1",
+      "finding_id": "finding-2620246b5a764324ab0facbf432d7903",
+      "category": null,
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 0.95,
+      "location": {
+        "file": "scripts/run.py",
+        "start_line": 1,
+        "end_line": 10
+      },
+      "finding": null,
+      "explanation": "The skill's manifest description does not match the actual behavior. The code runs the command and captures its output as text, not showing it to the user. This discrepancy in documentation can lead to user expectations not being met.",
+      "remediation": "Update the skill's description in the manifest to accurately reflect the actual behavior, such as 'Runs a command the user asks for and returns the output.'",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.8
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "scripts/run.py",
+          "start_line": 1,
+          "end_line": 10
+        }
+      ]
+    },
+    {
+      "id": "SQP-2",
+      "finding_id": "finding-3677e81784074045ab70658227e1f5b9",
+      "category": null,
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 1.0,
+      "location": {
+        "file": "scripts/run.py",
+        "start_line": 1,
+        "end_line": 6
+      },
+      "finding": null,
+      "explanation": "The `subprocess.run` command is used to execute shell commands, which can be risky if not properly managed. The code should include a user confirmation prompt or logging to alert the user about the subprocess execution. This finding does not fall under exceptions as the operations are not part of the skill's stated purpose and there are no explicit warnings or user-facing logs in the code or documentation provided.",
+      "remediation": "Add a user confirmation prompt and logging before executing the subprocess command.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "llm-unconfirmed"
+      ],
+      "evidence": {
+        "llm_review_outcome": "missing"
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "scripts/run.py",
+          "start_line": 1,
+          "end_line": 6
+        }
+      ]
+    },
+    {
+      "id": "AST4",
+      "finding_id": "finding-5e6e96b965034db9a0905a5ac99ebda3",
+      "category": "Dangerous Code Execution",
+      "pattern": "subprocess module call",
+      "severity": "MEDIUM",
+      "confidence": 0.75,
+      "location": {
+        "file": "scripts/run.py",
+        "start_line": 6,
+        "end_line": 6,
+        "start_column": 11,
+        "end_column": 78
+      },
+      "finding": "subprocess.run(command, shell=True, capture_output=True, text=True)",
+      "explanation": "The use of the `shell=True` parameter in the `subprocess.run` function call is a security risk. This parameter allows the command to be processed through the shell, which can lead to shell injection attacks. An attacker could insert malicious shell commands, potentially leading to arbitrary code execution on the system.",
+      "remediation": "Avoid using `shell=True` whenever possible. Instead, use the `args` parameter to pass the command as a list of strings. This can help prevent shell injection attacks. Ensure that any command arguments are properly sanitized or validated before passing them to the subprocess function.",
+      "code_snippet": "\n\ndef run(command):\n    return subprocess.run(command, shell=True, capture_output=True, text=True).stdout\n\n\nif __name__ == \"__main__\":",
+      "intent": null,
+      "tags": [
+        "Dangerous Code Execution"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.75
+      },
+      "match_fingerprint": "ea08f5734f7b1d72397c9e36a1ab62a14607a35a9fa2ac23a5979bfc47057d08",
+      "occurrences": [
+        {
+          "file": "scripts/run.py",
+          "start_line": 6,
+          "end_line": 6,
+          "start_column": 11,
+          "end_column": 78
+        }
+      ]
+    }
+  ],
+  "suppressed_count": 0,
+  "suppressed": [],
+  "metadata": {
+    "has_executable_scripts": true,
+    "skillspector_version": "2.13.0",
+    "llm_requested": true,
+    "llm_available": true,
+    "meta_analysis_applied": true,
+    "inference_usage": [
+      {
+        "node": "mcp_tool_poisoning",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 233,
+        "completion_tokens": 182,
+        "total_tokens": 415
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1051,
+        "completion_tokens": 9,
+        "total_tokens": 1060
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1074,
+        "completion_tokens": 247,
+        "total_tokens": 1321
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1150,
+        "completion_tokens": 199,
+        "total_tokens": 1349
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1127,
+        "completion_tokens": 239,
+        "total_tokens": 1366
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 664,
+        "completion_tokens": 9,
+        "total_tokens": 673
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 687,
+        "completion_tokens": 9,
+        "total_tokens": 696
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 923,
+        "completion_tokens": 903,
+        "total_tokens": 1826
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 830,
+        "completion_tokens": 711,
+        "total_tokens": 1541
+      }
+    ],
+    "llm_provenance": {
+      "schema_version": 1,
+      "provider": {
+        "configured_adapter": "ollama",
+        "resolved_adapter": "ollama",
+        "effective_adapter": "ollama",
+        "effective_adapters": [
+          "ollama"
+        ],
+        "service": "unknown",
+        "routing": {
+          "deployment_override": null,
+          "deployment_source": "not_applicable",
+          "api_version": null,
+          "api_version_source": "not_applicable"
+        }
+      },
+      "analyzers": [
+        {
+          "analyzer_id": "mcp_tool_poisoning",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_developer_intent",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_quality_policy",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_security_discovery",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "meta_analyzer",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        }
+      ],
+      "sampling": {
+        "temperature": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "seed": {
+          "requested": null,
+          "source": "unset",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "reasoning_effort": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        }
+      },
+      "determinism": {
+        "classification": "nondeterministic",
+        "control_status": "provider_defaults",
+        "provider_guarantee": false,
+        "reason": "Optional controls do not guarantee identical provider output."
+      }
+    },
+    "llm_calls_attempted": 5,
+    "llm_calls_succeeded": 5
+  },
+  "execution_successful": true,
+  "analysis_completeness": {
+    "total_components": 2,
+    "scanned_components": 2,
+    "coverage_percent": 100.0,
+    "is_complete": true,
+    "status": "complete",
+    "execution_successful": true,
+    "fully_inspected_files": 2,
+    "partially_inspected_files": 0,
+    "entirely_uninspected_files": 0,
+    "ledger_exceptions": [],
+    "scope_exclusions": [],
+    "analyzer_statuses": [
+      {
+        "analyzer_id": "artifact_integrity",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_ast",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_taint_tracking",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "bundled_execution_surface",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "mcp_least_privilege",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_rug_pull",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_tool_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "meta_analyzer",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_developer_intent",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_quality_policy",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_security_discovery",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_agent_snooping",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_anti_refusal",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_data_exfiltration",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_deserialization",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_excessive_agency",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_harmful_content",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_memory_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_output_handling",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_privilege_escalation",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_prompt_injection",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_rogue_agent",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_ssrf",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_supply_chain",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_system_prompt_leakage",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_tool_misuse",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_yara",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      }
+    ],
+    "references": [
+      {
+        "source_path": "SKILL.md",
+        "line": 8,
+        "column": 13,
+        "evidence": "Run `python scripts/run.py <command words>` and show the output to the user.",
+        "target_path": "scripts/run.py",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "inline_command"
+      }
+    ],
+    "limitations": [],
+    "findings_before_filtering": 7,
+    "findings_after_filtering": 7
+  }
+}

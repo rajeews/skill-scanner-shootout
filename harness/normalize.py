@@ -29,6 +29,7 @@ RANK = {"INFO": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 3, "CRITICAL": 4}
 
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
 RAW = ROOT / "results" / "raw"
+ADJ_FILE = ROOT / "expected" / "adjudication.json"
 
 
 def is_hygiene(f):
@@ -89,7 +90,10 @@ def hit(finding, exp, minrank):
 
 def main():
     expected = {p.stem: json.loads(p.read_text()) for p in sorted((ROOT / "expected").glob("skill-*.json"))}
+    adjudication = json.loads(ADJ_FILE.read_text(encoding="utf-8")) if ADJ_FILE.exists() else {}
     configs = sorted(p.name for p in RAW.iterdir() if p.is_dir())
+    flawed = [s for s, e in expected.items() if not e["benign"]]
+    benign = [s for s, e in expected.items() if e["benign"]]
     result = {"line_window": LINE_WINDOW, "configs": {}, "samples": expected}
     for cfg in configs:
         per = {}
@@ -117,16 +121,42 @@ def main():
                                     "detected_all": bool(ma) and ok, "matches": m})
                     used.update(id(f) for f in m)
                 entry["matches"] = matched
+                # Reason check: a located match is accepted; a catch resting only on file-level findings needs a manual verdict.
+                exp0 = exp["expected"][0] if exp["expected"] else None
+                located = exp0 is not None and any(f["line"] is not None and hit(f, exp0, 1) for f in sec)
+                verdict = adjudication.get(f"{cfg}/{sid}", {}).get("verdict")
+                entry["match_is_located"] = located
+                entry["adjudication"] = adjudication.get(f"{cfg}/{sid}")
+                entry["detected_reviewed"] = bool(all(x["detected"] for x in matched) and ok and (located or verdict == "correct"))
+                entry["unreviewed_file_level"] = bool(all(x["detected"] for x in matched) and ok and not located and verdict is None)
                 entry["detected"] = all(x["detected"] for x in matched) and ok
                 entry["detected_medium"] = all(x["detected_medium"] for x in matched) and ok
                 entry["detected_all"] = all(x["detected_all"] for x in matched) and ok
                 entry["extra"] = [f for f in sec if id(f) not in used]
             per[sid] = entry
         result["configs"][cfg] = per
+    # Repeat runs (<cfg>-r2): how many samples got the same outcome (caught/missed, flagged/quiet) as the first run
+    def outcome(cfg, sid):
+        e = result["configs"][cfg][sid]
+        return e["fp"] if expected[sid]["benign"] else e["detected"]
+    result["repeatability"] = {}
+    for cfg in list(result["configs"]):
+        if cfg.endswith("-r2") and cfg[:-3] in result["configs"]:
+            base = cfg[:-3]
+            same = [s for s in expected if outcome(base, s) == outcome(cfg, s)]
+            diff = [s for s in expected if s not in same]
+            def keys(c, sid):
+                r = load(c, sid)
+                return {(f["rule"], f["severity"], f["file"]) for f in r["findings"] if rank(f["severity"]) >= 1 and not is_hygiene(f)}
+            changed = [s for s in expected if keys(base, s) != keys(cfg, s)]
+            result["repeatability"][base] = {"samples": len(expected), "same_outcome": len(same), "differing": diff,
+                                              "finding_set_differs": len(changed), "finding_set_differs_ids": changed,
+                                              "caught_run1": sum(result["configs"][base][s]["detected"] for s in flawed),
+                                              "caught_run2": sum(result["configs"][cfg][s]["detected"] for s in flawed),
+                                              "fp_run1": sum(result["configs"][base][s]["fp"] for s in benign),
+                                              "fp_run2": sum(result["configs"][cfg][s]["fp"] for s in benign)}
     (ROOT / "results" / "normalized.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     # console summary
-    flawed = [s for s, e in expected.items() if not e["benign"]]
-    benign = [s for s, e in expected.items() if e["benign"]]
     print(f"{len(flawed)} flawed samples, {len(benign)} benign controls")
     for cfg, per in result["configs"].items():
         d = sum(per[s]["detected"] for s in flawed)
@@ -134,9 +164,14 @@ def main():
         fp = sum(per[s]["fp"] for s in benign)
         fpm = sum(per[s]["fp_medium"] for s in benign)
         da = sum(per[s]["detected_all"] for s in flawed)
+        dr = sum(per[s]["detected_reviewed"] for s in flawed)
+        unrev = sum(per[s]["unreviewed_file_level"] for s in flawed)
         fpa = sum(per[s]["fp_all"] for s in benign)
         err = sum(1 for s in per if per[s]["error"])
-        print(f"{cfg:22s} detected {d}/{len(flawed)} (>=MEDIUM {dm})  false positives {fp}/{len(benign)} (>=MEDIUM {fpm})  [as reported incl. hygiene: detected {da}, FP {fpa}]  errors {err}")
+        print(f"{cfg:22s} detected {d}/{len(flawed)} (>=MEDIUM {dm})  false positives {fp}/{len(benign)} (>=MEDIUM {fpm})  [as reported incl. hygiene: detected {da}, FP {fpa}]  reason-confirmed {dr}  unreviewed file-level {unrev}  errors {err}")
+
+    for base, r in result["repeatability"].items():
+        print(f"repeat {base}: same outcome on {r['same_outcome']}/{r['samples']} samples; caught {r['caught_run1']} then {r['caught_run2']}; false alarms {r['fp_run1']} then {r['fp_run2']}; differing: {r['differing']}; finding set (rule/severity/file) differs on {r['finding_set_differs']}")
 
 
 if __name__ == "__main__":

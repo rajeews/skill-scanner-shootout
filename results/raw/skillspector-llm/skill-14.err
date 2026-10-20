@@ -1,0 +1,3 @@
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/forecast.py (lines 1–16); retrying in 0.50s (1/3)
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/forecast.py (lines 1–16); retrying in 1.00s (2/3)
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/forecast.py (lines 1–16); retrying in 2.00s (3/3)

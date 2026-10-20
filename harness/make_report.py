@@ -20,7 +20,10 @@ CONFIGS = {  # id -> (label, scanner, description)
     "cisco-osv": ("Cisco + behavioral + OSV (online)", "Cisco", "--use-behavioral --use-osv, network on (most capable key-free config)"),
     "skillspector-offline": ("SkillSpector offline", "NVIDIA", "scan --no-llm, offline (OSV falls back to built-in list)"),
     "skillspector-osv": ("SkillSpector + OSV (online)", "NVIDIA", "scan --no-llm, network on for OSV.dev dependency check"),
+    "cisco-llm": ("Cisco + LLM (local 7B)", "Cisco", "--use-llm --policy balanced (vendor-recommended recipe), judge = qwen2.5:7b on a local Ollama with no network"),
+    "skillspector-llm": ("SkillSpector + LLM (local 7B)", "NVIDIA", "LLM stage on, judge = qwen2.5:7b on a local Ollama with no network"),
 }
+PART2 = ["cisco-default", "cisco-llm", "skillspector-offline", "skillspector-llm"]
 HEADLINE = ["cisco-osv", "skillspector-osv"]  # each tool at its most capable key-free config, both with the online OSV.dev check
 FAMILY_TITLES = {k: v["title"] for k, v in FW["families"].items()}
 
@@ -62,6 +65,33 @@ for sid in sorted(samples):
             e["findings"] if s["benign"] else [m for x in e["matches"] for m in x["matches"]] + e["extra"])]}
     data["samples"].append(row)
 
+
+def part2_notes():
+    """HTML for the Part 2 section; empty when the LLM configs were not run."""
+    if "cisco-llm" not in N["configs"] or "skillspector-llm" not in N["configs"]:
+        return ""
+    C = N["configs"]
+
+    def n(c, key): return sum(C[c][s][key] for s in flawed)
+    def f(c): return sum(C[c][s]["fp"] for s in benign)
+    adj = json.loads((ROOT / "expected" / "adjudication.json").read_text(encoding="utf-8")) if (ROOT / "expected" / "adjudication.json").exists() else {}
+    cis = [v["verdict"] for k, v in adj.items() if k.startswith("cisco-llm/")]
+    rep = N.get("repeatability", {})
+
+    def rline(c, label):
+        r = rep.get(c)
+        return (f"<li><b>{label} repeatability:</b> across two full runs the same outcome on {r['same_outcome']} of {r['samples']} samples "
+                f"(caught {r['caught_run1']} then {r['caught_run2']}; false alarms {r['fp_run1']} then {r['fp_run2']}), but the set of rule, severity and file changed on {r['finding_set_differs']} samples.</li>") if r else ""
+    return f"""<h2>Part 2: a local LLM judge</h2>
+<div class="card"><ul>
+<li><b>Setup:</b> each scanner's LLM stage pointed at <code>qwen2.5:7b</code> running in Ollama on a 6 GB consumer GPU (partly offloaded to CPU), in a container with <b>no network</b>. Scan containers joined that container's network namespace, so the model was reachable on loopback and there was no other route out. Cisco was run with its recommended <code>--use-llm --policy balanced</code>; SkillSpector with its LLM stage on. No API keys, no dependency lookup. This is a small model; Cisco's docs describe results with a larger local one.</li>
+<li><b>Result:</b> Cisco {n('cisco-default','detected')} to {n('cisco-llm','detected')} caught ({n('cisco-llm','detected_reviewed')} with the reason confirmed), false alarms {f('cisco-default')} to {f('cisco-llm')}. SkillSpector {n('skillspector-offline','detected')} to {n('skillspector-llm','detected')} caught, false alarms {f('skillspector-offline')} to {f('skillspector-llm')}.</li>
+<li><b>Reason check:</b> LLM findings often have no line number, so a catch that rests only on a file-level finding was read by hand. For Cisco's LLM stage: {cis.count('correct')} correct, {cis.count('partial')} partial (points at the code but mislabels it), {cis.count('wrong_reason')} flagged the file without evidence of recognising the flaw. SkillSpector's new LLM catches had line numbers and were also read: all correct. Verdicts and notes are in <code>expected/adjudication.json</code>; they are judgement calls, which is why both counts are shown.</li>
+<li><b>False alarms:</b> with the model on, SkillSpector flagged the safe-path note reader and the pinned-requirements control. For the latter the model's own explanation called the discrepancy "a false positive in terms of security" while the tool reported it as HIGH.</li>
+{rline('cisco-llm', 'Cisco')}{rline('skillspector-llm', 'SkillSpector')}
+<li><b>Still missed by everything:</b> the path-traversal read.</li>
+</ul></div>"""
+
 page = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -89,6 +119,7 @@ code,pre{font:13px/1.45 ui-monospace,Menlo,Consolas,monospace}pre{background:var
 
 <h2>Headline: caught or missed, per sample</h2>
 <p class="legend"><span class="caught">&#10003; caught</span><span class="missed">&#10007; missed</span><span class="fp">! false alarm (benign sample flagged)</span><span class="ok">&#8211; correctly quiet</span></p>
+<p><button id="p1">Part 1: static baseline</button> <button id="p2">Part 2: static vs local LLM judge (all offline)</button></p>
 <div id="cfgpick"></div>
 <div class="scroll"><table id="matrix"></table></div>
 <p class="mut" id="summaryline"></p>
@@ -126,6 +157,8 @@ code,pre{font:13px/1.45 ui-monospace,Menlo,Consolas,monospace}pre{background:var
 <li><b>Missed by both:</b> instructions to fetch and follow remote rules written in prose, reading a cloud credentials file, writing to a shell startup file, a path-traversal read, and a "read-only" Skill that deletes a folder.</li>
 </ul></div>
 
+__PART2NOTES__
+
 <h2>Limits</h2>
 <div class="card"><ul>
 <li>Small, synthetic, author-written sample set; real malicious Skills are messier. Some samples are deliberately hard (marked "hard").</li>
@@ -148,6 +181,7 @@ const SYM = {caught:"✓ caught", missed:"✗ missed", fp:"! false alarm", ok:"�
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const allCfgs = Object.keys(D.configs);
 let shown = new Set(__HEADLINE__);
+const PART1 = __HEADLINE__, PART2 = __PART2__;
 let fwSel = new Set();
 
 function buildPick(){
@@ -210,14 +244,17 @@ function renderSens(){
 }
 function render(){ renderMatrix(); renderFamilies(); renderFw(); }
 buildPick(); render(); renderDetail(); renderSens();
+function preset(list){ shown = new Set(list.filter(c => allCfgs.includes(c))); buildPick(); render(); }
+el("p1").onclick = () => preset(PART1); el("p2").onclick = () => preset(PART2);
+if (!allCfgs.includes("cisco-llm")) el("p2").style.display = "none";
 el("vers").textContent = __VERS__;
 </script></body></html>
 """
 
 meta = META
 vers = "\n".join(f"{k}: {v}" for k, v in meta["images"].items())
-out = (page.replace("__DATA__", json.dumps(data))
-       .replace("__HEADLINE__", json.dumps(HEADLINE))
+out = (page.replace("__PART2NOTES__", part2_notes()).replace("__DATA__", json.dumps(data))
+       .replace("__HEADLINE__", json.dumps(HEADLINE)).replace("__PART2__", json.dumps(PART2))
        .replace("__VERS__", json.dumps(vers))
        .replace("__RUNDATE__", html.escape("Run " + meta["run_date"]))
        .replace("__NF__", str(len(flawed))).replace("__NB__", str(len(benign)))

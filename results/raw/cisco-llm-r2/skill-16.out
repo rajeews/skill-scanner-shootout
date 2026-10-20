@@ -1,0 +1,240 @@
+{
+  "skill_name": "quick-calc",
+  "skill_path": "/corpus/skill-16",
+  "is_safe": false,
+  "max_severity": "CRITICAL",
+  "findings_count": 3,
+  "findings": [
+    {
+      "id": "MANIFEST_MISSING_LICENSE_c5ae9be793",
+      "rule_id": "MANIFEST_MISSING_LICENSE",
+      "category": "policy_violation",
+      "severity": "INFO",
+      "title": "Skill does not specify a license",
+      "description": "Skill manifest does not include a 'license' field. Specifying a license helps users understand usage terms.",
+      "file_path": "SKILL.md",
+      "line_number": null,
+      "snippet": null,
+      "remediation": "Add 'license' field to SKILL.md frontmatter (e.g., MIT, Apache-2.0)",
+      "analyzer": "static",
+      "metadata": {
+        "aitech": null,
+        "aitech_name": null,
+        "aisubtech": null,
+        "aisubtech_name": null,
+        "aitech_mappings": [],
+        "aisubtech_mappings": [],
+        "framework_mappings": [],
+        "taxonomy_status": "not_applicable",
+        "taxonomy_source": "rule"
+      }
+    },
+    {
+      "id": "llm_finding_quick-calc_0",
+      "rule_id": "LLM_COMMAND_INJECTION",
+      "category": "command_injection",
+      "severity": "CRITICAL",
+      "title": "Command Injection via eval() in Python Script",
+      "description": "The Python script `calc.py` uses `eval()` to execute the expression provided by the user, which can lead to arbitrary code execution if the input is not properly sanitized.",
+      "file_path": "scripts/calc.py",
+      "line_number": null,
+      "snippet": "The `eval()` function in the `calculate` function of `scripts/calc.py` directly evaluates the user-provided expression, posing a significant security risk.",
+      "remediation": "Replace `eval()` with a safer alternative such as `ast.literal_eval()` or a dedicated math library to safely evaluate mathematical expressions.",
+      "analyzer": "llm",
+      "metadata": {
+        "model": "ollama/qwen2.5:7b",
+        "aitech": "AITech-9.1",
+        "aitech_name": "Model or Agentic System Manipulation",
+        "aisubtech": null,
+        "aisubtech_name": null,
+        "scanner_category": "INJECTION ATTACK",
+        "llm_verdict": "TRUE_POSITIVE",
+        "llm_confidence": "HIGH",
+        "evidence_ids": [
+          "DET:bb2bfc53c7bc83d5",
+          "SRC:9310a3f42b12285b"
+        ],
+        "aitech_mappings": [
+          "OWASP: LLM04:2026: Supply Chain",
+          "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+          "OWASP: ASI05: Unexpected Code Execution (RCE)",
+          "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+          "NIST AML: NISTAML.023: Backdoor Poisoning",
+          "Cisco AI MDL Code: MDL-006",
+          "Cisco AI MDL Code: MDL-007",
+          "Cisco AI MDL Code: MDL-005",
+          "Cisco AI MDL Code: MDL-010",
+          "Cisco AI MDL Code: MDL-012",
+          "Cisco AI MDL Code: MDL-014",
+          "Cisco AI MDL Code: MDL-015",
+          "Cisco AI MDL Code: MDL-019"
+        ],
+        "aisubtech_mappings": [],
+        "framework_mappings": [
+          "OWASP: LLM04:2026: Supply Chain",
+          "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+          "OWASP: ASI05: Unexpected Code Execution (RCE)",
+          "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+          "NIST AML: NISTAML.023: Backdoor Poisoning",
+          "Cisco AI MDL Code: MDL-006",
+          "Cisco AI MDL Code: MDL-007",
+          "Cisco AI MDL Code: MDL-005",
+          "Cisco AI MDL Code: MDL-010",
+          "Cisco AI MDL Code: MDL-012",
+          "Cisco AI MDL Code: MDL-014",
+          "Cisco AI MDL Code: MDL-015",
+          "Cisco AI MDL Code: MDL-019"
+        ],
+        "taxonomy_status": "mapped",
+        "taxonomy_source": "finding"
+      }
+    },
+    {
+      "id": "COMMAND_INJECTION_EVAL_267f405e72",
+      "rule_id": "COMMAND_INJECTION_EVAL",
+      "category": "command_injection",
+      "severity": "CRITICAL",
+      "title": "Dangerous code execution functions that can execute arbitrary code",
+      "description": "Pattern detected: eval(",
+      "file_path": "scripts/calc.py",
+      "line_number": 5,
+      "snippet": "return eval(expression)",
+      "remediation": "Avoid eval(), exec(), and compile(). Use safer alternatives like ast.literal_eval() or operator module",
+      "analyzer": "static",
+      "metadata": {
+        "matched_pattern": "(?<!['\\\"])\\beval\\s*\\(",
+        "matched_text": "eval(",
+        "signature_pattern_index": 0,
+        "signature_match_start": 7,
+        "signature_match_end": 12,
+        "signature_pattern_sha256": "965406a10c27bfbc9765905dc4e20e4e695541b28654b082352d6aea5df24b1d",
+        "scanner_category": "INJECTION ATTACK",
+        "signature_context": "code",
+        "signature_polarity": "active",
+        "source_category": "command_injection",
+        "category_normalization": "native",
+        "semantic_facts": {
+          "evidence_kind": "signature_pattern",
+          "context_kind": "code",
+          "signals": [
+            {
+              "rule_id": "COMMAND_INJECTION_EVAL",
+              "kind": "signature_polarity",
+              "file_path": "scripts/calc.py",
+              "value_class": "active"
+            }
+          ]
+        },
+        "aitech": "AITech-9.1",
+        "aitech_name": "Model or Agentic System Manipulation",
+        "aisubtech": "AISubtech-9.1.4",
+        "aisubtech_name": "Injection Attacks (e.g., SQL, Command Execution, XSS)",
+        "aitech_mappings": [
+          "OWASP: LLM04:2026: Supply Chain",
+          "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+          "OWASP: ASI05: Unexpected Code Execution (RCE)",
+          "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+          "NIST AML: NISTAML.023: Backdoor Poisoning",
+          "Cisco AI MDL Code: MDL-006",
+          "Cisco AI MDL Code: MDL-007",
+          "Cisco AI MDL Code: MDL-005",
+          "Cisco AI MDL Code: MDL-010",
+          "Cisco AI MDL Code: MDL-012",
+          "Cisco AI MDL Code: MDL-014",
+          "Cisco AI MDL Code: MDL-015",
+          "Cisco AI MDL Code: MDL-019"
+        ],
+        "aisubtech_mappings": [
+          "OWASP: LLM01:2026: Prompt Injection",
+          "OWASP: LLM10:2026: Improper Output Handling",
+          "OWASP: LLM03:2026: Excessive Agency",
+          "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+          "OWASP: ASI05: Unexpected Code Execution (RCE)",
+          "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+          "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+          "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+          "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+          "NIST AML: NISTAML.024: Targeted Poisoning"
+        ],
+        "framework_mappings": [
+          "OWASP: LLM01:2026: Prompt Injection",
+          "OWASP: LLM10:2026: Improper Output Handling",
+          "OWASP: LLM03:2026: Excessive Agency",
+          "OWASP: ASI04: Agentic Supply Chain Vulnerabilities",
+          "OWASP: ASI05: Unexpected Code Execution (RCE)",
+          "MITRE ATLAS: AML.T0051: LLM Prompt Injection",
+          "MITRE ATLAS: AML.T0050: Command and Scripting Interpreter",
+          "MITRE ATLAS: AML.T0067: LLM Trusted Output Component Manipulation",
+          "MITRE ATT&CK: T1588.007: Obtain AI Capabilities",
+          "NIST AML: NISTAML.024: Targeted Poisoning"
+        ],
+        "taxonomy_status": "mapped",
+        "taxonomy_source": "rule"
+      }
+    }
+  ],
+  "scan_duration_seconds": 34.082502603530884,
+  "duration_ms": 34082,
+  "analyzers_used": [
+    "static_analyzer",
+    "bytecode",
+    "pipeline",
+    "correlation",
+    "llm_analyzer"
+  ],
+  "timestamp": "2026-10-20T20:45:42.473394+00:00",
+  "scan_metadata": {
+    "policy_name": "default",
+    "policy_version": "1.0",
+    "policy_preset_base": "balanced",
+    "policy_fingerprint_sha256": "3f48e661bfbc54597f97bbf3dcf2c1cbae2f596ddc79c0b44784efea326b3d1d",
+    "cel": {
+      "mode": "shadow",
+      "runtime": "cel-go",
+      "runtime_version": "v0.32.0;helper=2.3.0",
+      "fact_schema": "v1",
+      "expression_set_hash": "f26459b8f4a46a974d7ab0aaae34127b5b6a40d693e266e12fca03a69a6d26aa",
+      "evaluated": 0,
+      "retained": 2,
+      "would_suppress": 0,
+      "suppressed": 0,
+      "fallbacks": 0,
+      "projection_incomplete": 0,
+      "elapsed_ms": 0.0,
+      "projection_ms": 0.0,
+      "evaluation_ms": 0.0,
+      "errors": [],
+      "per_rule": {},
+      "suppressed_candidates": []
+    },
+    "rule_contract": {
+      "status": "passed",
+      "schema_version": 2,
+      "checked": 1,
+      "invalid_findings": 0,
+      "errors": []
+    },
+    "llm_overall_assessment": "SUSPICIOUS",
+    "llm_primary_threats": [
+      "Potential for arbitrary code execution",
+      "Lack of input validation and sanitization"
+    ],
+    "taxonomy": {
+      "source": "builtin",
+      "version": "2.0.0",
+      "name": "Cisco AI Security and Safety Taxonomy",
+      "revision": "655a343ac943a51b6f61f86e47156e7752c15dc6",
+      "snapshot_sha256": "3df746f05470b0766ded4714e992182e73c8a5d9945d42354f176f5c90007071",
+      "findings": {
+        "mapped": 2,
+        "not_applicable": 1,
+        "unmapped": 0
+      }
+    }
+  },
+  "llm_usage": {
+    "input_tokens": 2816,
+    "output_tokens": 302,
+    "total_tokens": 3118
+  }
+}

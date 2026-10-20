@@ -4,7 +4,7 @@
 > payloads, no real credentials). Antivirus, EDR or corporate security tools may flag them. **Don't clone this repo onto a
 > managed work machine.** The scanners only read the samples; nothing here executes them.
 
-**Stage 1 of 2: the static, key-free baseline (no LLM stage). Stage 2 will add an LLM judge running on a local model.**
+**Stage 1 of 2: the static, key-free baseline (no LLM stage). Stage 2, below, adds an LLM judge running on a local model.**
 
 A small, reproducible benchmark of open-source scanners for AI-agent Skills (`SKILL.md` plus scripts). It runs each scanner
 against a set of planted flaws and harmless controls, and records what each one catches, misses and falsely flags.
@@ -27,6 +27,34 @@ These numbers describe **this small, synthetic sample set only**. They are not a
 VirusTotal or cloud analyzer was run (no API keys). Cisco's README says every setup it recommends includes its LLM judge and
 that rules alone catch only about 8% of its own held-out malicious Skills. Snyk Agent Scan was not run: it needs a Snyk
 token and sends Skill content to Snyk's API.
+
+## Part 2: the same scanners with a local LLM judge
+
+Both tools have an LLM stage. Part 2 runs them with the judge on a **local** model so nothing leaves the machine: `qwen2.5:7b` in
+Ollama on a 6 GB consumer GPU, inside a container with **no network**. Each scan container joins that container's network
+namespace, so the model is reachable on loopback and there is no other route out (Cisco's Ollama route only accepts loopback).
+Cisco is run with its recommended `--use-llm --policy balanced`; SkillSpector with its LLM stage on. No API keys.
+
+| Config | Planted flaws caught | Caught, reason confirmed | Harmless controls flagged |
+|---|---|---|---|
+| Cisco, static (offline) | 7 / 18 | 7 | 1 / 6 |
+| Cisco + local LLM | 13 / 18 | 11 | 1 / 6 |
+| SkillSpector, static (offline) | 13 / 18 | 13 | 2 / 6 |
+| SkillSpector + local LLM | 17 / 18 | 17 | 4 / 6 |
+
+LLM findings often have no line number, so a catch resting only on a file-level finding was read by hand (`expected/adjudication.json`;
+judgement calls, so both counts are shown). Each LLM config was run twice: Cisco gave the same outcome on 24 of
+24 samples and SkillSpector on 23 of 24, but the findings themselves changed
+(rule, severity or file differed on 5 samples for Cisco and 20 for SkillSpector). Raw output for both runs is in `results/raw/`
+(`*-llm` and `*-llm-r2`). It is one small model, so a larger model could change the picture.
+
+Rerun part 2 (needs a GPU, or a lot of patience on CPU):
+
+```sh
+sh harness/llm_setup.sh      # pulls the model once, starts the no-network Ollama container
+sh harness/run_llm.sh        # RUN_TAG=-r2 sh harness/run_llm.sh for a repeat run
+LLM=1 sh harness/reproduce.sh   # or do everything, part 1 and part 2
+```
 
 ## What is in here
 

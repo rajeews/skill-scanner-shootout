@@ -7,6 +7,8 @@ versions from the owners' own distribution channels:
   https://github.com/cisco-ai-defense/skill-scanner
 - NVIDIA SkillSpector (v2.13.0, commit 091a509b3d6ba8ff5be528966e1f43c2e68cf214), Apache License 2.0
   https://github.com/NVIDIA/skillspector
+- Ollama (ollama/ollama image), MIT licence, https://github.com/ollama/ollama, and the model qwen2.5:7b, Apache License 2.0
+  (Qwen team), used only for part 2
 - matplotlib 3.11.2 (used only to draw the chart), matplotlib license
   https://matplotlib.org/
 - Python 3.12 (Docker Official Image python:3.12-slim-bookworm), PSF License

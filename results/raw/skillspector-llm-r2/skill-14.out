@@ -1,0 +1,772 @@
+{
+  "skill": {
+    "name": "weather-brief",
+    "source": "/corpus/skill-14",
+    "scanned_at": "2026-10-20T21:15:02.563914+00:00"
+  },
+  "risk_assessment": {
+    "score": 100,
+    "severity": "CRITICAL",
+    "recommendation": "DO_NOT_INSTALL",
+    "max_issue_severity": "HIGH"
+  },
+  "components": [
+    {
+      "path": "SKILL.md",
+      "type": "markdown",
+      "lines": 11,
+      "executable": true,
+      "size_bytes": 388,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/forecast.py",
+      "type": "python",
+      "lines": 16,
+      "executable": true,
+      "size_bytes": 446,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    }
+  ],
+  "structured_summaries": [],
+  "issues": [
+    {
+      "id": "TP4",
+      "finding_id": "finding-530313cd49bc48fda233209b62d461fa",
+      "category": "MCP Tool Poisoning",
+      "pattern": null,
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": null,
+      "explanation": "There is a description-behavior mismatch. The declared purpose states that the skill fetches a forecast, but the actual code performs additional operations such as printing the forecast and using an API key that isn't mentioned in the declared purpose. This could lead to a misinterpretation of the skill's capabilities and could be a security risk if the external API key is mishandled.",
+      "remediation": "Ensure the description accurately reflects the full range of functionalities of the skill. Add explicit documentation for any additional actions or parameters the skill might use.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02",
+        "AML.T0080"
+      ],
+      "evidence": {
+        "code_path": "scripts/forecast.py",
+        "code_start_line": 1,
+        "code_end_line": 16,
+        "actual_behavior_summary": "Fetches weather forecast data from an API and prints the JSON response.",
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.8
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "SDI-1",
+      "finding_id": "finding-97d9dd07b2ff4bfeb26a824fe955d281",
+      "category": null,
+      "pattern": null,
+      "severity": "HIGH",
+      "confidence": 1.0,
+      "location": {
+        "file": "scripts/forecast.py",
+        "start_line": 10,
+        "end_line": 11
+      },
+      "finding": null,
+      "explanation": "The skill's description implies it fetches data from a documented weather API, but the actual implementation uses a custom API endpoint. Additionally, the API key is stored in an environment variable, which could introduce security risks if not properly managed.",
+      "remediation": "Update the skill's description to accurately reflect the actual API usage. Ensure that the API key is securely stored and rotated, and consider adding logging or exception handling for error conditions.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 1.0
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "scripts/forecast.py",
+          "start_line": 10,
+          "end_line": 11
+        }
+      ]
+    },
+    {
+      "id": "LP3",
+      "finding_id": "finding-191ac46c7b2d4b2980866958088f39b9",
+      "category": "MCP Least Privilege",
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 1,
+        "end_line": null
+      },
+      "finding": null,
+      "explanation": "The skill declares no explicit `permissions` or `allowed-tools` scope, but the code performs actions that require permissions to use external tools (network and env access). This is an informational finding that highlights good practice, but there's no immediate security risk if the intent is benign.",
+      "remediation": "While not strictly necessary for functionality, it's recommended to declare the `permissions` or `allowed-tools` scope in the metadata to clearly indicate the skill\u2019s capabilities.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "ASI02"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.7
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 1,
+          "end_line": null
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "finding_id": "finding-0288213b2fc9473b95b1419df04e1b57",
+      "category": "Data Exfiltration",
+      "pattern": "External Transmission",
+      "severity": "MEDIUM",
+      "confidence": 0.6,
+      "location": {
+        "file": "SKILL.md",
+        "start_line": 8,
+        "end_line": null,
+        "start_column": 41
+      },
+      "finding": "https://api.example.com/",
+      "explanation": "The code makes a network request to an external URL, which is common. However, there are no explicit warnings or error handling for this request, which could lead to potential security issues if an attacker crafts malicious inputs.",
+      "remediation": "Add proper error handling for network requests and consider adding a security warning or validation step before making the request. Ensure that the API key is securely handled and validated.",
+      "code_snippet": "\n# Weather Brief\n\nThis Skill makes ONE network request, to https://api.example.com/v1/forecast, and sends only the city name.\nThe user supplies their own API key in the environment variable `WEATHER_API_KEY`.\n\nRun `python scripts/forecast.py <city>` and summarise the forecast.",
+      "intent": null,
+      "tags": [
+        "Data Exfiltration"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.6
+      },
+      "match_fingerprint": "88f1946300c8ae45d5ea7e81f2b6d4309a13082e928b6f7d1215d273945a1431",
+      "occurrences": [
+        {
+          "file": "SKILL.md",
+          "start_line": 8,
+          "end_line": null,
+          "start_column": 41
+        }
+      ]
+    },
+    {
+      "id": "SQP-2",
+      "finding_id": "finding-a709491555fd4d81adf20644b98cd014",
+      "category": null,
+      "pattern": null,
+      "severity": "MEDIUM",
+      "confidence": 1.0,
+      "location": {
+        "file": "scripts/forecast.py",
+        "start_line": 8,
+        "end_line": 12
+      },
+      "finding": null,
+      "explanation": "This network call should have a user confirmation step or a logging statement to inform the user about the data being transmitted and the action being performed. Without such a warning, it could lead to unintended data transmission without user consent, which may raise privacy concerns.",
+      "remediation": "Add a user confirmation step or logging statement before making the network request.",
+      "code_snippet": null,
+      "intent": null,
+      "tags": [
+        "llm-unconfirmed"
+      ],
+      "evidence": {
+        "llm_review_outcome": "low-confidence",
+        "llm_review_confidence": 0.5
+      },
+      "match_fingerprint": null,
+      "occurrences": [
+        {
+          "file": "scripts/forecast.py",
+          "start_line": 8,
+          "end_line": 12
+        }
+      ]
+    },
+    {
+      "id": "E1",
+      "finding_id": "finding-92c3e903583546b1807856a88688024b",
+      "category": "Data Exfiltration",
+      "pattern": "External Transmission",
+      "severity": "MEDIUM",
+      "confidence": 0.8,
+      "location": {
+        "file": "scripts/forecast.py",
+        "start_line": 9,
+        "end_line": null,
+        "start_column": 11
+      },
+      "finding": "https://api.example.com/",
+      "explanation": "The script makes a network request to an external API, which could pose security risks, such as potential exposure to network sniffing or man-in-the-middle attacks. The custom API endpoint, 'https://api.example.com/v1/forecast', might not be well-secured.",
+      "remediation": "Ensure that the external API is properly secured and supports HTTPS. Consider adding network-level security measures, such as using a firewall or content security policies (CSP), and validate the API's security controls.",
+      "code_snippet": "\n\ndef forecast(city):\n    url = \"https://api.example.com/v1/forecast\" + urllib.parse.urlencode({\"city\": city})\n    req = urllib.request.Request(url, headers={\"Authorization\": \"Bearer \" + os.environ[\"WEATHER_API_KEY\"]})\n    with urllib.request.urlopen(req, timeout=10) as resp:\n        return json.load(resp)",
+      "intent": null,
+      "tags": [
+        "Data Exfiltration"
+      ],
+      "evidence": {
+        "llm_review_outcome": "confirmed",
+        "llm_review_confidence": 0.8
+      },
+      "match_fingerprint": "88f1946300c8ae45d5ea7e81f2b6d4309a13082e928b6f7d1215d273945a1431",
+      "occurrences": [
+        {
+          "file": "scripts/forecast.py",
+          "start_line": 9,
+          "end_line": null,
+          "start_column": 11
+        }
+      ]
+    }
+  ],
+  "suppressed_count": 0,
+  "suppressed": [],
+  "metadata": {
+    "has_executable_scripts": true,
+    "skillspector_version": "2.13.0",
+    "llm_requested": true,
+    "llm_available": true,
+    "meta_analysis_applied": true,
+    "inference_usage": [
+      {
+        "node": "mcp_tool_poisoning",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 297,
+        "completion_tokens": 202,
+        "total_tokens": 499
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1118,
+        "completion_tokens": 7,
+        "total_tokens": 1125
+      },
+      {
+        "node": "semantic_developer_intent",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1163,
+        "completion_tokens": 237,
+        "total_tokens": 1400
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1236,
+        "completion_tokens": 206,
+        "total_tokens": 1442
+      },
+      {
+        "node": "semantic_quality_policy",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 1191,
+        "completion_tokens": 8,
+        "total_tokens": 1199
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 728,
+        "completion_tokens": 8,
+        "total_tokens": 736
+      },
+      {
+        "node": "semantic_security_discovery",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 773,
+        "completion_tokens": 9,
+        "total_tokens": 782
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 990,
+        "completion_tokens": 670,
+        "total_tokens": 1660
+      },
+      {
+        "node": "meta_analyzer",
+        "request_kind": "structured_output",
+        "provider": "ollama",
+        "model": "qwen2.5:7b",
+        "model_source": "requested_model",
+        "usage_source": "provider_response",
+        "prompt_tokens": 930,
+        "completion_tokens": 680,
+        "total_tokens": 1610
+      }
+    ],
+    "llm_provenance": {
+      "schema_version": 1,
+      "provider": {
+        "configured_adapter": "ollama",
+        "resolved_adapter": "ollama",
+        "effective_adapter": "ollama",
+        "effective_adapters": [
+          "ollama"
+        ],
+        "service": "unknown",
+        "routing": {
+          "deployment_override": null,
+          "deployment_source": "not_applicable",
+          "api_version": null,
+          "api_version_source": "not_applicable"
+        }
+      },
+      "analyzers": [
+        {
+          "analyzer_id": "mcp_tool_poisoning",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_developer_intent",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_quality_policy",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_security_discovery",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "meta_analyzer",
+          "model": "qwen2.5:7b",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        }
+      ],
+      "sampling": {
+        "temperature": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "seed": {
+          "requested": null,
+          "source": "unset",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        },
+        "reasoning_effort": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": true,
+          "provider_support": "unknown"
+        }
+      },
+      "determinism": {
+        "classification": "nondeterministic",
+        "control_status": "provider_defaults",
+        "provider_guarantee": false,
+        "reason": "Optional controls do not guarantee identical provider output."
+      }
+    },
+    "llm_calls_attempted": 5,
+    "llm_calls_succeeded": 5
+  },
+  "execution_successful": true,
+  "analysis_completeness": {
+    "total_components": 2,
+    "scanned_components": 2,
+    "coverage_percent": 100.0,
+    "is_complete": true,
+    "status": "complete",
+    "execution_successful": true,
+    "fully_inspected_files": 2,
+    "partially_inspected_files": 0,
+    "entirely_uninspected_files": 0,
+    "ledger_exceptions": [],
+    "scope_exclusions": [],
+    "analyzer_statuses": [
+      {
+        "analyzer_id": "artifact_integrity",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_ast",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_taint_tracking",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "bundled_execution_surface",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "mcp_least_privilege",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_rug_pull",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_tool_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "meta_analyzer",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_developer_intent",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_quality_policy",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "semantic_security_discovery",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_agent_snooping",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_anti_refusal",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_data_exfiltration",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_deserialization",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_excessive_agency",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_harmful_content",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_memory_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_output_handling",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_privilege_escalation",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_prompt_injection",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_rogue_agent",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_ssrf",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_supply_chain",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_system_prompt_leakage",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_tool_misuse",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_yara",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      }
+    ],
+    "references": [
+      {
+        "source_path": "SKILL.md",
+        "line": 11,
+        "column": 13,
+        "evidence": "Run `python scripts/forecast.py <city>` and summarise the forecast.",
+        "target_path": "scripts/forecast.py",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "inline_command"
+      }
+    ],
+    "limitations": [],
+    "findings_before_filtering": 6,
+    "findings_after_filtering": 6
+  }
+}

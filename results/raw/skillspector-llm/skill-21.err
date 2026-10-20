@@ -1,0 +1,2 @@
+WARNING [skillspector.nodes.analyzers.osv_client] OSV.dev API request failed, falling back to static data: [Errno -3] Temporary failure in name resolution
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/plot.py (lines 1–11); retrying in 0.50s (1/3)

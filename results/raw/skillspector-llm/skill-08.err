@@ -1,0 +1,5 @@
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/tag.py (lines 1–2); retrying in 0.50s (1/3)
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/tag.py (lines 1–2); retrying in 1.00s (2/3)
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/tag.py (lines 1–2); retrying in 2.00s (3/3)
+WARNING [skillspector.llm_analyzer_base] LLM structured response validation failed for File: scripts/tag.py (lines 1–2) after 4 attempts
+WARNING [skillspector.nodes.report] LLM stage degraded: semantic runtime telemetry was incomplete; report may reflect static analysis only
