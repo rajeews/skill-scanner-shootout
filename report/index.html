@@ -20,7 +20,7 @@ code,pre{font:13px/1.45 ui-monospace,Menlo,Consolas,monospace}pre{background:var
 .legend span{margin-right:14px;white-space:nowrap}
 </style></head><body><main>
 <h1>Skill scanner shoot-out</h1>
-<p class="mut">Independent, reproducible comparison of open-source scanners for AI agent Skills on a small synthetic sample set. <b>Run 2026-10-20</b>. Results describe this sample set only; they are not a ranking of the tools.</p>
+<p class="mut">Independent, reproducible comparison of open-source scanners for AI agent Skills on a small synthetic sample set. <b>Run 2026-10-20</b>. Results describe this sample set only; they are not a ranking of the tools. <b>Part 1 of 2: the key-free static baseline.</b> Part 2 will add an LLM judge running on a local model.</p>
 <div class="card"><b>Read this first.</b> No LLM review stage, VirusTotal or cloud analyzer was run (no API keys, static analysis only). Cisco's README says every setup it recommends includes its LLM judge, and that rules alone catch only about 8% of its own held-out set of malicious Skills; SkillSpector also has an optional LLM stage, off here. Cisco also describes its scan as best-effort: a clean result is not a guarantee. 22 of the 24 samples were written before any scanner was installed; the last two (known-vulnerable pinned dependencies) were added after a first run to exercise the online dependency check, and every scan was then re-run on the full set. No sample was tuned to a tool's output. Treat the numbers as a map of what static checks cover, not as a verdict.</div>
 
 <h2>Headline: caught or missed, per sample</h2>

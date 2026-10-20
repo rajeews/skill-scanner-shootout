@@ -4,6 +4,8 @@
 > payloads, no real credentials). Antivirus, EDR or corporate security tools may flag them. **Don't clone this repo onto a
 > managed work machine.** The scanners only read the samples; nothing here executes them.
 
+**Stage 1 of 2: the static, key-free baseline (no LLM stage). Stage 2 will add an LLM judge running on a local model.**
+
 A small, reproducible benchmark of open-source scanners for AI-agent Skills (`SKILL.md` plus scripts). It runs each scanner
 against a set of planted flaws and harmless controls, and records what each one catches, misses and falsely flags.
 

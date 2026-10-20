@@ -40,8 +40,8 @@ def blend(x):
 fig = plt.figure(figsize=(10.8, 13.5), dpi=100, facecolor=BG)
 ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, 1080); ax.set_ylim(1350, 0); ax.axis("off")
 
-ax.text(54, 74, "Do AI-agent Skill scanners catch what", fontsize=33, fontweight="bold", color=FG, va="top")
-ax.text(54, 122, "they should?", fontsize=33, fontweight="bold", color=FG, va="top")
+ax.text(54, 74, "Skill scanners with no LLM stage:", fontsize=33, fontweight="bold", color=FG, va="top")
+ax.text(54, 122, "what do they catch?  (part 1 of 2)", fontsize=33, fontweight="bold", color=FG, va="top")
 ax.text(54, 184, f"{len(flawed)} planted flaws + {len(benign)} harmless controls, 2 open-source scanners, static analysis only", fontsize=16, color=MUT, va="top")
 
 x0, w0 = 54, 392          # label column
@@ -84,7 +84,7 @@ for k, (cfg, _, _) in enumerate(COLS):
 y += 168
 ax.text(x0, y, "No LLM review stage was run. Cisco's docs recommend one and say rules alone catch", fontsize=13, color=MUT, va="top")
 ax.text(x0, y + 22, "only about 8% of its own held-out set. Results describe this small, synthetic", fontsize=13, color=MUT, va="top")
-ax.text(x0, y + 44, "sample set only. They are not a ranking of the tools.", fontsize=13, color=MUT, va="top")
+ax.text(x0, y + 44, "sample set only, not a ranking. Part 2 adds a local LLM judge, run on-prem.", fontsize=13, color=MUT, va="top")
 ax.text(x0, 1296, f"Run {META['run_date']}  |  samples and scripts open source, Docker, pinned versions  |  rajeew.com/blog/skill-scanner-shootout",
         fontsize=11.5, color=MUT, va="center")
 
