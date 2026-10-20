@@ -1,0 +1,16 @@
+{
+  "id": "skill-12",
+  "label": "n02-telemetry-post",
+  "benign": false,
+  "family": "network_fetch",
+  "family_code": "F1",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/summarize.py",
+      "line": 18,
+      "needle": "urllib.request.urlopen(req",
+      "severity": "high"
+    }
+  ]
+}

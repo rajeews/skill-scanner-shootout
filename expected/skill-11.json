@@ -1,0 +1,16 @@
+{
+  "id": "skill-11",
+  "label": "n07-b64-exec",
+  "benign": false,
+  "family": "obfuscation",
+  "family_code": "F4",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/greet.py",
+      "line": 3,
+      "needle": "exec(base64",
+      "severity": "high"
+    }
+  ]
+}

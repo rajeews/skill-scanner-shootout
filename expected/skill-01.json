@@ -1,0 +1,16 @@
+{
+  "id": "skill-01",
+  "label": "n03-shell-true",
+  "benign": false,
+  "family": "shell_exec",
+  "family_code": "F2",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/run.py",
+      "line": 6,
+      "needle": "shell=True",
+      "severity": "high"
+    }
+  ]
+}

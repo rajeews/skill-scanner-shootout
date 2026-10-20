@@ -1,0 +1,12 @@
+{
+  "run_date": "2026-10-20",
+  "cisco_version": "2.3.0 (PyPI cisco-ai-skill-scanner)",
+  "skillspector_version": "v2.13.0 (github.com/NVIDIA/skillspector)",
+  "skillspector_commit": "091a509b3d6ba8ff5be528966e1f43c2e68cf214",
+  "images": {
+    "base python:3.12-slim-bookworm": "sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+    "shootout-cisco:2.3.0": "sha256:2d2a481aa5b55caae647a0f59b43557c4ca6ac85908c40437bb3c2e7acc3967c",
+    "shootout-skillspector:2.13.0": "sha256:d85af616f8d0fe9cb0c0465140f6ad6969003a8e75a903a7f3c20ee067a6023b",
+    "shootout-report:mpl3.11.2": "sha256:e202434f8ea2db28cd642f0a81321b0cd301d2984d9e5b4f29b44a10eca8347a"
+  }
+}

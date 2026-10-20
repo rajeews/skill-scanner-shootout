@@ -1,0 +1,20 @@
+Third-party software and attribution
+
+This repository does not contain the source code of any scanner it tests. The Dockerfiles install pinned
+versions from the owners' own distribution channels:
+
+- Cisco AI Defense Skill Scanner (cisco-ai-skill-scanner 2.3.0), Apache License 2.0
+  https://github.com/cisco-ai-defense/skill-scanner
+- NVIDIA SkillSpector (v2.13.0, commit 091a509b3d6ba8ff5be528966e1f43c2e68cf214), Apache License 2.0
+  https://github.com/NVIDIA/skillspector
+- matplotlib 3.11.2 (used only to draw the chart), matplotlib license
+  https://matplotlib.org/
+- Python 3.12 (Docker Official Image python:3.12-slim-bookworm), PSF License
+
+The files under results/raw/ contain output produced by the scanners above when run on this repository's sample
+Skills. Short excerpts of that output (rule names, titles, severities, matched lines of the samples) are included
+for transparency and remain the work of their respective authors.
+
+Framework names and identifiers (OWASP Top 10 for LLM Applications, OWASP Top 10 for Agentic Applications,
+MITRE ATLAS, MITRE CWE, MITRE ATT&CK) belong to their owners and are used for reference only.
+Mapping rule families to framework items is the author's judgement, not an official crosswalk.

@@ -1,0 +1,16 @@
+{
+  "id": "skill-13",
+  "label": "n12-path-traversal",
+  "benign": false,
+  "family": "out_of_scope_file_access",
+  "family_code": "F6",
+  "difficulty": "hard",
+  "expected": [
+    {
+      "file": "scripts/read_note.py",
+      "line": 8,
+      "needle": "open(os.path.join(BASE, name)",
+      "severity": "medium"
+    }
+  ]
+}

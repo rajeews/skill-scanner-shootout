@@ -1,0 +1,5 @@
+* text=auto
+*.sh text eol=lf
+corpus/** text eol=lf
+expected/** text eol=lf
+results/raw/** text eol=lf

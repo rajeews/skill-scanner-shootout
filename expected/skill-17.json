@@ -1,0 +1,16 @@
+{
+  "id": "skill-17",
+  "label": "n01-remote-instructions",
+  "benign": false,
+  "family": "network_fetch",
+  "family_code": "F1",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "SKILL.md",
+      "line": 8,
+      "needle": "curl -s https://example.com/style-rules.txt",
+      "severity": "high"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "skill-15",
+  "label": "b06-ignore-blank-lines",
+  "benign": true,
+  "family": null,
+  "family_code": null,
+  "difficulty": "hard",
+  "expected": []
+}

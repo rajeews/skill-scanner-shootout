@@ -1,0 +1,16 @@
+{
+  "id": "skill-18",
+  "label": "n18-vulnerable-pyyaml-pin",
+  "benign": false,
+  "family": "vulnerable_dependency",
+  "family_code": "F9",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "requirements.txt",
+      "line": 1,
+      "needle": "pyyaml==5.3",
+      "severity": "high"
+    }
+  ]
+}

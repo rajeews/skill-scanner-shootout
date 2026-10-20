@@ -1,0 +1,9 @@
+{
+  "id": "skill-14",
+  "label": "b02-weather-api",
+  "benign": true,
+  "family": null,
+  "family_code": null,
+  "difficulty": "hard",
+  "expected": []
+}

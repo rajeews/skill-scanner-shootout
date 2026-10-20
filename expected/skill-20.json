@@ -1,0 +1,16 @@
+{
+  "id": "skill-20",
+  "label": "n13-offline-formatter-network",
+  "benign": false,
+  "family": "description_mismatch",
+  "family_code": "F7",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/fmt.py",
+      "line": 13,
+      "needle": "requests.post",
+      "severity": "high"
+    }
+  ]
+}

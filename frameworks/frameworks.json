@@ -1,0 +1,187 @@
+{
+  "_note": "Mapping of rule families to framework items is the author's judgement, not an official crosswalk by any framework owner. Item IDs and titles were verified at the owners' pages on 2026-10-20.",
+  "frameworks": {
+    "owasp-llm-2025": {
+      "name": "OWASP Top 10 for LLM Applications 2025",
+      "root": "https://genai.owasp.org/llm-top-10/",
+      "items": {
+        "LLM01": "Prompt Injection",
+        "LLM02": "Sensitive Information Disclosure",
+        "LLM03": "Supply Chain",
+        "LLM06": "Excessive Agency"
+      }
+    },
+    "owasp-agentic-2026": {
+      "name": "OWASP Top 10 for Agentic Applications for 2026 (published 2025-12-09)",
+      "root": "https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/",
+      "items": {
+        "ASI01": "Agent Goal Hijack",
+        "ASI02": "Tool Misuse",
+        "ASI03": "Identity & Privilege Abuse",
+        "ASI04": "Agentic Supply Chain Vulnerabilities",
+        "ASI05": "Unexpected Code Execution"
+      }
+    },
+    "mitre-atlas": {
+      "name": "MITRE ATLAS (atlas-data v5.6.0)",
+      "root": "https://atlas.mitre.org/",
+      "items": {
+        "AML.T0051": "LLM Prompt Injection",
+        "AML.T0051.001": "LLM Prompt Injection: Indirect"
+      }
+    },
+    "cwe": {
+      "name": "MITRE CWE",
+      "root": "https://cwe.mitre.org/",
+      "items": {
+        "CWE-22": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+        "CWE-78": "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+        "CWE-95": "Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection')",
+        "CWE-494": "Download of Code Without Integrity Check",
+        "CWE-829": "Inclusion of Functionality from Untrusted Control Sphere",
+        "CWE-1395": "Dependency on Vulnerable Third-Party Component"
+      }
+    },
+    "mitre-attack": {
+      "name": "MITRE ATT&CK",
+      "root": "https://attack.mitre.org/",
+      "items": {
+        "T1027": "Obfuscated Files or Information",
+        "T1552.001": "Unsecured Credentials: Credentials In Files",
+        "T1546.004": "Event Triggered Execution: Unix Shell Configuration Modification"
+      }
+    }
+  },
+  "families": {
+    "network_fetch": {
+      "title": "Network calls and URL fetches",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM01"
+        ],
+        "owasp-agentic-2026": [
+          "ASI01",
+          "ASI04"
+        ],
+        "mitre-atlas": [
+          "AML.T0051.001"
+        ],
+        "cwe": [
+          "CWE-829"
+        ]
+      }
+    },
+    "shell_exec": {
+      "title": "Shell execution, eval/exec",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM06"
+        ],
+        "owasp-agentic-2026": [
+          "ASI05"
+        ],
+        "cwe": [
+          "CWE-78",
+          "CWE-95"
+        ]
+      }
+    },
+    "runtime_install": {
+      "title": "Runtime package installs and unpinned downloads",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM03"
+        ],
+        "owasp-agentic-2026": [
+          "ASI04"
+        ],
+        "cwe": [
+          "CWE-494",
+          "CWE-829"
+        ]
+      }
+    },
+    "obfuscation": {
+      "title": "Obfuscated or encoded code",
+      "refs": {
+        "owasp-agentic-2026": [
+          "ASI05"
+        ],
+        "mitre-attack": [
+          "T1027"
+        ]
+      }
+    },
+    "credential_access": {
+      "title": "Credential or secret access",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM02"
+        ],
+        "owasp-agentic-2026": [
+          "ASI03"
+        ],
+        "mitre-attack": [
+          "T1552.001"
+        ]
+      }
+    },
+    "out_of_scope_file_access": {
+      "title": "Reads or writes outside the skill's scope",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM06"
+        ],
+        "cwe": [
+          "CWE-22"
+        ]
+      },
+      "sample_extra": {
+        "n11-bashrc-write": {
+          "mitre-attack": [
+            "T1546.004"
+          ]
+        }
+      }
+    },
+    "description_mismatch": {
+      "title": "Description does not match behaviour",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM06"
+        ],
+        "owasp-agentic-2026": [
+          "ASI02"
+        ]
+      }
+    },
+    "instruction_override": {
+      "title": "Instruction text that overrides rules or hides actions",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM01"
+        ],
+        "owasp-agentic-2026": [
+          "ASI01"
+        ],
+        "mitre-atlas": [
+          "AML.T0051"
+        ]
+      }
+    },
+    "vulnerable_dependency": {
+      "title": "Known-vulnerable pinned dependencies",
+      "refs": {
+        "owasp-llm-2025": [
+          "LLM03"
+        ],
+        "owasp-agentic-2026": [
+          "ASI04"
+        ],
+        "cwe": [
+          "CWE-1395"
+        ]
+      }
+    }
+  }
+}

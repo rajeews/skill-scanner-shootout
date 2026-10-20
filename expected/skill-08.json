@@ -1,0 +1,16 @@
+{
+  "id": "skill-08",
+  "label": "n08-chr-obfuscation",
+  "benign": false,
+  "family": "obfuscation",
+  "family_code": "F4",
+  "difficulty": "hard",
+  "expected": [
+    {
+      "file": "scripts/tag.py",
+      "line": 2,
+      "needle": "getattr(__builtins__",
+      "severity": "medium"
+    }
+  ]
+}

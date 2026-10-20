@@ -1,0 +1,9 @@
+{
+  "id": "skill-02",
+  "label": "b03-git-status",
+  "benign": true,
+  "family": null,
+  "family_code": null,
+  "difficulty": "hard",
+  "expected": []
+}

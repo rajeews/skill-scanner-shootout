@@ -1,0 +1,9 @@
+{
+  "id": "skill-05",
+  "label": "b05-safe-note-reader",
+  "benign": true,
+  "family": null,
+  "family_code": null,
+  "difficulty": "hard",
+  "expected": []
+}

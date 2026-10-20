@@ -1,0 +1,16 @@
+{
+  "id": "skill-03",
+  "label": "n10-env-secrets",
+  "benign": false,
+  "family": "credential_access",
+  "family_code": "F5",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/report.py",
+      "line": 5,
+      "needle": "os.environ.items()",
+      "severity": "high"
+    }
+  ]
+}

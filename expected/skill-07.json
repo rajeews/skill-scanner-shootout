@@ -1,0 +1,16 @@
+{
+  "id": "skill-07",
+  "label": "n17-vulnerable-requests-pin",
+  "benign": false,
+  "family": "vulnerable_dependency",
+  "family_code": "F9",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "requirements.txt",
+      "line": 1,
+      "needle": "requests==2.19.1",
+      "severity": "high"
+    }
+  ]
+}

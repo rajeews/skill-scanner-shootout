@@ -1,0 +1,16 @@
+{
+  "id": "skill-09",
+  "label": "n05-runtime-pip",
+  "benign": false,
+  "family": "runtime_install",
+  "family_code": "F3",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/chart.py",
+      "line": 4,
+      "needle": "\"pip\", \"install\"",
+      "severity": "medium"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "skill-22",
+  "label": "n11-bashrc-write",
+  "benign": false,
+  "family": "out_of_scope_file_access",
+  "family_code": "F6",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/install.py",
+      "line": 5,
+      "needle": "\".bashrc\"",
+      "severity": "high"
+    }
+  ]
+}

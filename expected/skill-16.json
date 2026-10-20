@@ -1,0 +1,16 @@
+{
+  "id": "skill-16",
+  "label": "n04-eval-input",
+  "benign": false,
+  "family": "shell_exec",
+  "family_code": "F2",
+  "difficulty": "easy",
+  "expected": [
+    {
+      "file": "scripts/calc.py",
+      "line": 5,
+      "needle": "eval(expression)",
+      "severity": "high"
+    }
+  ]
+}

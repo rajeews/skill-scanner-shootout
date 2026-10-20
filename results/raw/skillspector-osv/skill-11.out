@@ -1,0 +1,572 @@
+{
+  "skill": {
+    "name": "greeting-writer",
+    "source": "/corpus/skill-11",
+    "scanned_at": "2026-10-20T13:29:11.253713+00:00"
+  },
+  "risk_assessment": {
+    "score": 100,
+    "severity": "CRITICAL",
+    "recommendation": "DO_NOT_INSTALL",
+    "max_issue_severity": "CRITICAL"
+  },
+  "components": [
+    {
+      "path": "SKILL.md",
+      "type": "markdown",
+      "lines": 8,
+      "executable": true,
+      "size_bytes": 165,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    },
+    {
+      "path": "scripts/greet.py",
+      "type": "python",
+      "lines": 3,
+      "executable": true,
+      "size_bytes": 87,
+      "source_url": null,
+      "source_identity": null,
+      "source_digest": null
+    }
+  ],
+  "structured_summaries": [],
+  "issues": [
+    {
+      "id": "AST8",
+      "finding_id": "finding-b7625ed88bff4a1382c0480c399074a5",
+      "category": "Dangerous Code Execution",
+      "pattern": "Dangerous chain: exec() wrapping base64.b64decode",
+      "severity": "CRITICAL",
+      "confidence": 0.95,
+      "location": {
+        "file": "scripts/greet.py",
+        "start_line": 3,
+        "end_line": 3,
+        "start_column": 0,
+        "end_column": 71
+      },
+      "finding": "exec(base64.b64decode(\"cHJpbnQoImhlbGxvIGZyb20gc2FtcGxlIik=\").decode())",
+      "explanation": "A dangerous execution chain combines code execution (exec/eval) with a dynamic source (network, encoded data, dynamic import), creating a high-confidence attack vector.",
+      "remediation": "Remove the execution chain entirely. Never pass network data, decoded bytes, or dynamically imported code to exec()/eval(). Use structured data formats instead.",
+      "code_snippet": "import base64\n\nexec(base64.b64decode(\"cHJpbnQoImhlbGxvIGZyb20gc2FtcGxlIik=\").decode())",
+      "intent": null,
+      "tags": [
+        "Dangerous Code Execution"
+      ],
+      "evidence": {},
+      "match_fingerprint": "98b263609ce7794a886dc540d877dcac00e08d81d8a41243227392a3020d23db",
+      "occurrences": [
+        {
+          "file": "scripts/greet.py",
+          "start_line": 3,
+          "end_line": 3,
+          "start_column": 0,
+          "end_column": 71
+        }
+      ]
+    },
+    {
+      "id": "AST1",
+      "finding_id": "finding-eee4562a1abe4d24b6c7a0056e4e796c",
+      "category": "Dangerous Code Execution",
+      "pattern": "exec() call detected",
+      "severity": "HIGH",
+      "confidence": 0.85,
+      "location": {
+        "file": "scripts/greet.py",
+        "start_line": 3,
+        "end_line": 3,
+        "start_column": 0,
+        "end_column": 71
+      },
+      "finding": "exec(base64.b64decode(\"cHJpbnQoImhlbGxvIGZyb20gc2FtcGxlIik=\").decode())",
+      "explanation": "Direct exec() call allows arbitrary code execution. An attacker can inject code that runs with the full privileges of the process.",
+      "remediation": "Replace exec() with a safe alternative. If dynamic execution is required, use a sandboxed environment or restricted eval with __builtins__ disabled.",
+      "code_snippet": "import base64\n\nexec(base64.b64decode(\"cHJpbnQoImhlbGxvIGZyb20gc2FtcGxlIik=\").decode())",
+      "intent": null,
+      "tags": [
+        "Dangerous Code Execution"
+      ],
+      "evidence": {},
+      "match_fingerprint": "1a33052e00388f7923d2e844b9d165b79c7133d8808ca4b77e9b125928ced867",
+      "occurrences": [
+        {
+          "file": "scripts/greet.py",
+          "start_line": 3,
+          "end_line": 3,
+          "start_column": 0,
+          "end_column": 71
+        }
+      ]
+    },
+    {
+      "id": "SC3",
+      "finding_id": "finding-9fe289c84e304530b9e3f02f8f3b3823",
+      "category": "Supply Chain",
+      "pattern": "Obfuscated Code",
+      "severity": "HIGH",
+      "confidence": 0.95,
+      "location": {
+        "file": "scripts/greet.py",
+        "start_line": 3,
+        "end_line": null,
+        "start_column": 0
+      },
+      "finding": "exec(base64.b64decode(",
+      "explanation": "Code contains obfuscation (base64, hex encoding with execution). This is often used to hide malicious functionality.",
+      "remediation": "Remove obfuscated code. Use plain, readable implementations. Obfuscation hinders security review and raises trust concerns.",
+      "code_snippet": "import base64\n\nexec(base64.b64decode(\"cHJpbnQoImhlbGxvIGZyb20gc2FtcGxlIik=\").decode())",
+      "intent": null,
+      "tags": [
+        "Supply Chain"
+      ],
+      "evidence": {},
+      "match_fingerprint": "1f6ce810c181462dd915f2fa80c1ad920ec49ebee0ae44b0dbc5df371b03a9c7",
+      "occurrences": [
+        {
+          "file": "scripts/greet.py",
+          "start_line": 3,
+          "end_line": null,
+          "start_column": 0
+        }
+      ]
+    }
+  ],
+  "suppressed_count": 0,
+  "suppressed": [],
+  "metadata": {
+    "has_executable_scripts": true,
+    "skillspector_version": "2.13.0",
+    "llm_requested": false,
+    "llm_available": false,
+    "meta_analysis_applied": false,
+    "inference_usage": [],
+    "llm_provenance": {
+      "schema_version": 1,
+      "provider": {
+        "configured_adapter": "unknown",
+        "resolved_adapter": "unknown",
+        "effective_adapter": "not_applicable",
+        "effective_adapters": [],
+        "service": "unknown",
+        "routing": {
+          "deployment_override": null,
+          "deployment_source": "unknown",
+          "api_version": null,
+          "api_version_source": "unknown"
+        }
+      },
+      "analyzers": [
+        {
+          "analyzer_id": "mcp_tool_poisoning",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_developer_intent",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_quality_policy",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "semantic_security_discovery",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        },
+        {
+          "analyzer_id": "meta_analyzer",
+          "model": "z-ai/glm-5.3",
+          "model_source": "resolved_configuration",
+          "analyzer_revision": {
+            "value": "2.13.0",
+            "source": "skillspector_package",
+            "source_revision": {
+              "value": "unknown",
+              "source": "unknown"
+            }
+          }
+        }
+      ],
+      "sampling": {
+        "temperature": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        },
+        "seed": {
+          "requested": null,
+          "source": "unset",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        },
+        "reasoning_effort": {
+          "requested": null,
+          "source": "provider_default",
+          "forwarded_to_client": null,
+          "adapter_support": false,
+          "provider_support": "unknown"
+        }
+      },
+      "determinism": {
+        "classification": "not_applicable",
+        "control_status": "not_applied",
+        "provider_guarantee": false,
+        "reason": "LLM analysis was not executed for this scan."
+      }
+    },
+    "filtering_mode": "heuristic"
+  },
+  "execution_successful": true,
+  "analysis_completeness": {
+    "total_components": 2,
+    "scanned_components": 2,
+    "coverage_percent": 100.0,
+    "is_complete": true,
+    "status": "complete",
+    "execution_successful": true,
+    "fully_inspected_files": 2,
+    "partially_inspected_files": 0,
+    "entirely_uninspected_files": 0,
+    "ledger_exceptions": [],
+    "scope_exclusions": [],
+    "analyzer_statuses": [
+      {
+        "analyzer_id": "artifact_integrity",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_ast",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "behavioral_taint_tracking",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "bundled_execution_surface",
+        "status": "not_applicable",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "no_applicable_files",
+        "message": "No files matched this analyzer's applicability contract."
+      },
+      {
+        "analyzer_id": "mcp_least_privilege",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_rug_pull",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "mcp_tool_poisoning",
+        "status": "completed",
+        "planned_work": 1,
+        "completed": 1,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "meta_analyzer",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "semantic_developer_intent",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "semantic_quality_policy",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "semantic_security_discovery",
+        "status": "disabled",
+        "planned_work": 0,
+        "completed": 0,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0,
+        "reason_code": "disabled_by_configuration",
+        "message": "Analyzer was disabled by the requested configuration."
+      },
+      {
+        "analyzer_id": "static_patterns_agent_snooping",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_anti_refusal",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_data_exfiltration",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_deserialization",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_excessive_agency",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_harmful_content",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_memory_poisoning",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_output_handling",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_privilege_escalation",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_prompt_injection",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_rogue_agent",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_ssrf",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_supply_chain",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_system_prompt_leakage",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_patterns_tool_misuse",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      },
+      {
+        "analyzer_id": "static_yara",
+        "status": "completed",
+        "planned_work": 2,
+        "completed": 2,
+        "partial": 0,
+        "skipped": 0,
+        "failed": 0,
+        "unaccounted": 0
+      }
+    ],
+    "references": [
+      {
+        "source_path": "SKILL.md",
+        "line": 8,
+        "column": 13,
+        "evidence": "Run `python scripts/greet.py` and use its output as the greeting.",
+        "target_path": "scripts/greet.py",
+        "status": "resolved",
+        "disposition": "analyzed",
+        "reference_kind": "inline_command"
+      }
+    ],
+    "limitations": [],
+    "findings_before_filtering": 3,
+    "findings_after_filtering": 3
+  }
+}

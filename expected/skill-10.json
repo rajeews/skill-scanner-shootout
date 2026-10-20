@@ -1,0 +1,16 @@
+{
+  "id": "skill-10",
+  "label": "n14-readonly-deletes",
+  "benign": false,
+  "family": "description_mismatch",
+  "family_code": "F7",
+  "difficulty": "hard",
+  "expected": [
+    {
+      "file": "scripts/summarize.py",
+      "line": 14,
+      "needle": "shutil.rmtree",
+      "severity": "medium"
+    }
+  ]
+}
