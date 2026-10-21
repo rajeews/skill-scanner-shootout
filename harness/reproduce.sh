@@ -19,5 +19,6 @@ $RUN_REPORT harness/make_meta.py /work
 $RUN_REPORT harness/normalize.py /work
 $RUN_REPORT harness/make_report.py /work
 $RUN_REPORT harness/make_chart.py /work
+$RUN_REPORT harness/make_gif.py /work
 if [ "${LLM:-0}" = "1" ]; then $RUN_REPORT harness/make_chart2.py /work; fi
 echo "Done. Open report/index.html and visual/shootout-headline.png"

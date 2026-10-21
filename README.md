@@ -67,7 +67,7 @@ LLM=1 sh harness/reproduce.sh   # or do everything, part 1 and part 2
 | `harness/` | Build, run, normalize, report and chart scripts (standard library plus matplotlib for the chart) |
 | `results/` | Raw scanner output per sample and config, the normalized results, pinned versions and image IDs |
 | `report/index.html` | The self-contained results explorer (no external requests) |
-| `visual/` | The headline chart |
+| `visual/` | The headline chart (PNG) and a looping animated version (GIF) |
 
 ## Reproduce
 
